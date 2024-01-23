@@ -1,4 +1,5 @@
 target
+buildSrc
 */src/generated
 mondrian.*properties
 *.ipr
@@ -7,6 +8,7 @@ mondrian.*properties
 .project
 .settings
 .classpath
+.gradle
 .idea
 *.json
 /.vs/slnx.sqlite
