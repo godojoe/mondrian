@@ -107,8 +107,8 @@ public class PropertyUtil {
         final File javaFile =
             new File(outputDir, "MondrianProperties.java");
         final File propertiesFile =
-            new File("target/mondrian.properties.template");
-        final File htmlFile = new File("target/site/doc", "properties.html");
+            new File("build/mondrian.properties.template");
+        final File htmlFile = new File("build/site/doc", "properties.html");
 
         SortedMap<String, PropertyDef> propertyDefinitionMap;
         try {

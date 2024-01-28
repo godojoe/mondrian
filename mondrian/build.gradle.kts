@@ -28,8 +28,10 @@ sourceSets {
             compileClasspath += sourceSets["main"].compileClasspath
         }
     }
+
     main {
         java {
+            srcDir("src/generated/java")
             compileClasspath += sourceSets["generateProperties"].output
             compileClasspath += sourceSets["generateResources"].output
         }
