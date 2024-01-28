@@ -3,9 +3,8 @@
  */
 
 rootProject.name = "pentaho-mondrian-parent-pom"
+include(":eigenbase-xom")
+include(":eigenbase-properties")
+include(":eigenbase-resgen")
 include(":mondrian")
-include(":pentaho-mondrian-assemblies")
-include(":workbench")
-include(":psw-ce")
-project(":pentaho-mondrian-assemblies").projectDir = file("assemblies")
-project(":psw-ce").projectDir = file("assemblies/psw-ce")
+
