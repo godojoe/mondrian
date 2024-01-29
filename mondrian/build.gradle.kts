@@ -68,6 +68,7 @@ tasks {
 
     register("XOMGen") {
         group = "build"
+        dependsOn(xomgen)
         doLast {
             val xomGenClassPath = project(":eigenbase-xom").sourceSets.getByName("main").output.classesDirs.asPath
             ant.withGroovyBuilder {
@@ -92,6 +93,7 @@ tasks {
 }
 
 val resgen = configurations.create("resgen")
+val xomgen = configurations.create("xomgen")
 
 dependencies {
     api(libs.xml.apis.xml.apis)
@@ -107,10 +109,11 @@ dependencies {
     api(libs.org.apache.commons.commons.vfs2)
     api(libs.org.dom4j.dom4j)
     api(libs.javax.validation.validation.api)
-    api(project(":eigenbase-xom"))
-    api(project(":eigenbase-properties"))
+    compileOnly(project(":eigenbase-xom"))
+    compileOnly(project(":eigenbase-properties"))
     compileOnly(project(":eigenbase-resgen"))
     resgen(project(":eigenbase-resgen"))
+    xomgen(project(":eigenbase-xom"))
     api(libs.org.olap4j.olap4j)
     //api(libs.org.olap4j.olap4j.xmla)
     api(libs.xerces.xercesimpl)
