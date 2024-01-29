@@ -12,6 +12,10 @@ tasks.register<Wrapper>("wrapper") {
 }
 tasks.register("prepareKotlinBuildScriptModel") {}
 
+java.sourceCompatibility = JavaVersion.VERSION_17
+java.targetCompatibility = JavaVersion.VERSION_17
+
+
 sourceSets {
     create("generateProperties") {
         java {
@@ -61,6 +65,30 @@ tasks {
             }
         }
     }
+
+    register("XOMGen") {
+        group = "build"
+        doLast {
+            val xomGenClassPath = project(":eigenbase-xom").sourceSets.getByName("main").output.classesDirs.asPath
+            ant.withGroovyBuilder {
+                "taskdef"("name" to "xomgen",
+                        "classname" to "org.eigenbase.xom.XOMGenTask",
+                        "classpath" to xomGenClassPath)
+                "xomgen"("model" to "src/main/java/mondrian/olap/Mondrian.xml",
+                        "destdir" to "src/generated/java",
+                        "classname" to "mondrian.olap.MondrianDef",
+                        "dtdname" to "mondrian.dtd")
+                "xomgen"("model" to "src/main/resources/DefaultRulesSchema.xml",
+                        "destdir" to "src/generated/java",
+                        "classname" to "mondrian.rolap.aggmatcher.DefaultDef",
+                        "dtdname" to "aggregates.dtd")
+                "xomgen"("model" to "src/main/java/mondrian/xmla/DataSourcesConfig.xml",
+                        "destdir" to "src/generated/java",
+                        "classname" to "mondrian.xmla.DataSourcesConfig",
+                        "dtdname" to "datasourcesconfig.dtd")
+            }
+        }
+    }
 }
 
 val resgen = configurations.create("resgen")
@@ -98,4 +126,5 @@ dependencies {
 
 tasks.withType<JavaCompile>() {
     dependsOn(tasks.getByName("generateMondrianResources"))
+    dependsOn(tasks.getByName("XOMGen"))
 }
