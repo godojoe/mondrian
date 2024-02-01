@@ -6,5 +6,6 @@ rootProject.name = "pentaho-mondrian-parent-pom"
 include(":eigenbase-xom")
 include(":eigenbase-properties")
 include(":eigenbase-resgen")
+include(":javacup")
 include(":mondrian")
 

@@ -2,6 +2,11 @@
 target
 buildSrc
 */src/generated
+*/javacup/bootstrap
+*/javacup/classes
+*/javacup/lib
+*/javacup/sym.java
+*/javacup/parser.java
 mondrian.*properties
 *.ipr
 *.iws

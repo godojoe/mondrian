@@ -17,13 +17,13 @@ java.targetCompatibility = JavaVersion.VERSION_17
 
 
 sourceSets {
-    create("generateProperties") {
+    /*create("generateProperties") {
         java {
             srcDir("$projectDir/src/main/java/mondrian/util")
             include("PropertyUtil.java")
             compileClasspath += sourceSets["main"].compileClasspath
         }
-    }
+    }*/
 
     create("generateResources") {
         java {
@@ -36,24 +36,31 @@ sourceSets {
     main {
         java {
             srcDir("src/generated/java")
-            compileClasspath += sourceSets["generateProperties"].output
-            compileClasspath += sourceSets["generateResources"].output
+            //compileClasspath += sourceSets["generateProperties"].output
+            //compileClasspath += sourceSets["generateResources"].output
         }
     }
 }
 tasks {
+    register("compilePropertyUtil", JavaCompile::class) {
+        group = "build"
+        description = "Compile PropertyUtil"
+        source  = fileTree("$projectDir/src/main/java/mondrian/util/mondrian.util.PropertyUtil")
+        classpath = sourceSets["main"].runtimeClasspath
+    }
+
     register("generateMondrianProperties", JavaExec::class) {
         group = "build"
         description = "Mondrian properties class"
         mainClass.set("mondrian.util.PropertyUtil")
-        classpath = sourceSets["generateProperties"].runtimeClasspath
+        //classpath = sourceSets["generateProperties"].runtimeClasspath
         args = listOf("src/main/java/mondrian/olap", "src/generated/java/mondrian/olap")
-        dependsOn("generatePropertiesClasses")
+        dependsOn("compilePropertyUtil")
     }
 
     register("generateMondrianResources") {
         group = "build"
-        dependsOn(resgen)
+        dependsOn(resgen, getByName("generateMondrianProperties"))
         doLast {
             var resGenClassPath = project(":eigenbase-resgen").sourceSets.getByName("main").output.classesDirs.asPath
             resGenClassPath += ";" + configurations.getByName("compileClasspath").asPath
@@ -120,6 +127,7 @@ dependencies {
     api(libs.javax.servlet.servlet.api)
     api(libs.javax.servlet.jsp.api)
     //api(libs.javacup.javacup)
+    api(project(":javacup"))
     api(libs.net.java.dev.javacc.javacc)
     testImplementation(libs.org.olap4j.olap4j.tck)
     testImplementation(libs.xmlunit.xmlunit)
