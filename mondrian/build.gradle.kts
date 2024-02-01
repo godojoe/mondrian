@@ -17,13 +17,13 @@ java.targetCompatibility = JavaVersion.VERSION_17
 
 
 sourceSets {
-    /*create("generateProperties") {
+    create("generateProperties") {
         java {
             srcDir("$projectDir/src/main/java/mondrian/util")
             include("PropertyUtil.java")
             compileClasspath += sourceSets["main"].compileClasspath
         }
-    }*/
+    }
 
     create("generateResources") {
         java {
@@ -36,26 +36,18 @@ sourceSets {
     main {
         java {
             srcDir("src/generated/java")
-            //compileClasspath += sourceSets["generateProperties"].output
-            //compileClasspath += sourceSets["generateResources"].output
+            compileClasspath += sourceSets["generateProperties"].output
+            compileClasspath += sourceSets["generateResources"].output
         }
     }
 }
 tasks {
-    register("compilePropertyUtil", JavaCompile::class) {
-        group = "build"
-        description = "Compile PropertyUtil"
-        source  = fileTree("$projectDir/src/main/java/mondrian/util/mondrian.util.PropertyUtil")
-        classpath = sourceSets["main"].runtimeClasspath
-    }
-
     register("generateMondrianProperties", JavaExec::class) {
         group = "build"
         description = "Mondrian properties class"
         mainClass.set("mondrian.util.PropertyUtil")
-        //classpath = sourceSets["generateProperties"].runtimeClasspath
+        classpath = sourceSets["generateProperties"].runtimeClasspath
         args = listOf("src/main/java/mondrian/olap", "src/generated/java/mondrian/olap")
-        dependsOn("compilePropertyUtil")
     }
 
     register("generateMondrianResources") {
@@ -78,6 +70,7 @@ tasks {
         dependsOn(xomgen)
         doLast {
             val xomGenClassPath = project(":eigenbase-xom").sourceSets.getByName("main").output.classesDirs.asPath
+            project.file("src/generated/java").mkdirs()
             ant.withGroovyBuilder {
                 "taskdef"("name" to "xomgen",
                         "classname" to "org.eigenbase.xom.XOMGenTask",
@@ -135,7 +128,6 @@ dependencies {
     testImplementation(libs.mysql.mysql.connector.java)
 }
 
-tasks.withType<JavaCompile>() {
-    dependsOn(tasks.getByName("generateMondrianResources"))
-    dependsOn(tasks.getByName("XOMGen"))
+tasks.getByName("compileJava") {
+    dependsOn(tasks.getByName("XOMGen"), tasks.getByName("generateMondrianResources"))
 }
