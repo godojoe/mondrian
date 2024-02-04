@@ -5,6 +5,7 @@ buildSrc
 **/javacup/bootstrap
 **/javacup/java
 **/javacup/classes
+**/javacup/dist
 **/javacup/lib
 **/javacup/sym.java
 **/javacup/parser.java

@@ -1,8 +1,8 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+//import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     id("java")
     id("java-library")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    //id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 
@@ -40,12 +40,14 @@ tasks.withType<JavaCompile>() {
 tasks.withType<Jar> {
     dependsOn(tasks.getByName("copyAntBuildOutput"))
 }
+/*
 tasks.named<ShadowJar>("shadowJar") {
     relocate("com.github.jhoenicke.javacup", "java_cup")
 }
+*/
 
 tasks.getByName("build") {
-    dependsOn("shadowJar")
+    //dependsOn("shadowJar")
 }
 
 tasks.withType<Test>() {
@@ -56,4 +58,5 @@ tasks.getByName("clean") {
     dependsOn(tasks.getByName("javacup-clean"))
     delete("sym.java")
     delete("parser.java")
+    delete("java/")
 }

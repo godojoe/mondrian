@@ -13,7 +13,7 @@
 // (http://www.microsoft.com/data/reference/oledb2.htm) by jhyde on 990120.
 */
 
-import java_cup.runtime.*;
+import com.github.jhoenicke.javacup.runtime.*;
 
 import java.util.*;
 import java.math.BigDecimal;

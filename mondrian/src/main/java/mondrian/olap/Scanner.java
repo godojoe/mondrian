@@ -14,7 +14,7 @@ package mondrian.olap;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import java_cup.runtime.Symbol;
+import com.github.jhoenicke.javacup.runtime.Symbol;
 
 import java.io.IOException;
 import java.math.BigDecimal;

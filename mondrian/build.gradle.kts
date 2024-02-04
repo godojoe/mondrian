@@ -33,7 +33,7 @@ sourceSets {
         }
     }
 
-    create("compiledGeneratedResources") {
+    create("compileGeneratedResources") {
         java {
             srcDir("$projectDir/src/generated/java/mondrian/resource")
             compileClasspath += sourceSets["main"].compileClasspath
@@ -46,7 +46,7 @@ sourceSets {
             srcDirs("src/main/java")
             compileClasspath += sourceSets["generateProperties"].output
             compileClasspath += sourceSets["generateResources"].output
-            compileClasspath += sourceSets["compiledGeneratedResources"].output
+            compileClasspath += sourceSets["compileGeneratedResources"].output
         }
     }
 }
@@ -131,10 +131,10 @@ tasks {
         dependsOn(parsergen)
         doLast {
             ant.withGroovyBuilder {
-                val cupParserClassPath = files("../javacup/build/libs/javacup-all.jar").asPath
+                val javaCUPJar = parsergen.resolvedConfiguration.resolvedArtifacts.single { it.extension == "jar" }.file.absolutePath
                 "taskdef"("name" to "javacup",
-                        "classname" to "java_cup.anttask.CUPTask",
-                        "classpath" to cupParserClassPath
+                        "classname" to "com.github.jhoenicke.javacup.anttask.CUPTask",
+                        "classpath" to javaCUPJar
                 )
                 "javacup"("srcfile" to "$projectDir/src/main/java/mondrian/olap/Parser.cup",
                         "destdir" to "$projectDir/src/main/java/mondrian/olap/",
@@ -179,8 +179,8 @@ dependencies {
     api(libs.javax.servlet.servlet.api)
     api(libs.javax.servlet.jsp.api)
     //api(libs.javacup.javacup)
-    api(project(":javacup", configuration = "shadow"))
-    parsergen(project(":javacup", configuration = "shadow"))
+    api(project(":javacup"/*, configuration = "shadow"*/))
+    parsergen(project(":javacup"/*, configuration = "shadow"*/))
     api(libs.net.java.dev.javacc.javacc)
     javaccparsergen(libs.net.java.dev.javacc.javacc)
     testImplementation(libs.org.olap4j.olap4j.tck)
@@ -190,7 +190,7 @@ dependencies {
 }
 
 tasks.getByName("compileGeneratePropertiesJava") {
-    dependsOn(project(":javacup").getTasksByName("shadowJar", false))
+    dependsOn(project(":javacup").getTasksByName("jar", false))
 }
 
 /*tasks.getByName("generateProperties") {
@@ -199,7 +199,11 @@ tasks.getByName("compileGeneratePropertiesJava") {
 
 
 tasks.getByName("compileGenerateResourcesJava") {
-    dependsOn(project(":javacup").getTasksByName("shadowJar", false))
+    dependsOn(project(":javacup").getTasksByName("jar", false))
+}
+
+tasks.getByName("compileCompileGeneratedResourcesJava") {
+    dependsOn(project(":javacup").getTasksByName("jar", false))
 }
 
 
@@ -216,5 +220,5 @@ tasks.getByName("classes") {
 }
 
 tasks.getByName("clean") {
-    delete("$projectDir/src/generated")
+    delete("$projectDir/src/generated", "$projectDir/src/main/java/mondrian/olap/Parser.java", "$projectDir/src/main/java/mondrian/olap/ParserSym.java")
 }
