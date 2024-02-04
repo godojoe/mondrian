@@ -49,6 +49,7 @@
   <target name="bootstrap" depends="javacup-init">
     <mkdir dir="${bootstrap}" />
     <javac includeantruntime="false" srcdir="${src}" destdir="${bootstrap}" source="8" target="8">
+      <classpath refid="libraries"/>
       <exclude name="${package}/anttask/**"/>
     </javac>
     <mkdir dir="${java}" />

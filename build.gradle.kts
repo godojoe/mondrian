@@ -1,3 +1,7 @@
+tasks.wrapper {
+    gradleVersion = "8.5"
+}
+
 subprojects {
     repositories {
         mavenCentral()

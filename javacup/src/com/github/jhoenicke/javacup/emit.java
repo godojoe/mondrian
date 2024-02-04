@@ -102,7 +102,7 @@ public class emit {
   /*-----------------------------------------------------------*/
   
   /** The package name of javacup's runtime. */
-  public final static String RUNTIME_PACKAGE = "com.github.jhoenicke.javacup.runtime";
+  public final static String RUNTIME_PACKAGE = "java_cup.runtime";
 
   /** The prefix placed on names that pollute someone else's name space. */
   public final static String prefix = "CUP$";
