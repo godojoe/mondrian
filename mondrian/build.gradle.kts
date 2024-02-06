@@ -7,8 +7,6 @@
 plugins {
     id("java")
     id("java-library")
-    //id("org.javacc.javacc") version "3.0.2"
-    //id("com.dorongold.task-tree") version "2.1.1"
 }
 
 tasks.register("prepareKotlinBuildScriptModel") {}
@@ -17,53 +15,42 @@ java.targetCompatibility = JavaVersion.VERSION_17
 
 
 sourceSets {
-    create("generateProperties") {
+    create("propertyUtil") {
         java {
             srcDir("$projectDir/src/main/java/mondrian/util")
             include("PropertyUtil.java")
             compileClasspath += sourceSets["main"].compileClasspath
+            destinationDirectory.set(layout.buildDirectory.dir("classes/java/propertyUtil"))
         }
     }
 
-    create("generateResources") {
+    create("exceptionTypes") {
         java {
             srcDir("$projectDir/src/main/java/mondrian/olap")
             include("MondrianException.java", "ResultLimitExceededException.java", "InvalidHierarchyException.java", "ResourceLimitExceededException.java", "NativeEvaluationUnsupportedException.java", "QueryCanceledException.java", "QueryTimeoutException.java")
             compileClasspath += sourceSets["main"].compileClasspath
+            destinationDirectory.set(layout.buildDirectory.dir("classes/java/exceptionTypes"))
         }
     }
 
-    create("compileGeneratedResources") {
+    create("generatedResource") {
         java {
             srcDir("$projectDir/src/generated/java/mondrian/resource")
             compileClasspath += sourceSets["main"].compileClasspath
+            destinationDirectory.set(layout.buildDirectory.dir("classes/java/generatedResource"))
         }
     }
 
     main {
         java {
-            srcDirs("src/generated/java")
-            srcDirs("src/main/java")
-            compileClasspath += sourceSets["generateProperties"].output
-            compileClasspath += sourceSets["generateResources"].output
-            compileClasspath += sourceSets["compileGeneratedResources"].output
+            srcDirs("$projectDir/src/generated/java", "$projectDir/src/main/java")
+            compileClasspath += getByName("propertyUtil").output
+            compileClasspath += getByName("exceptionTypes").output
         }
     }
 }
 
 tasks {
-/*    register("generateProperties", JavaCompile::class) {
-        //source = fileTree("$projectDir/src/main/java/mondrian/util/PropertyUtil.java")
-    }
-
-    register("generateResources", JavaCompile::class) {
-        //source = fileTree(listOf("MondrianException.java", "ResultLimitExceededException.java", "InvalidHierarchyException.java", "ResourceLimitExceededException.java", "NativeEvaluationUnsupportedException.java", "QueryCanceledException.java", "QueryTimeoutException.java").map { "$projectDir/src/main/java/mondrian/olap/$it" })
-    }
-
-    register("compiledGeneratedResources", JavaCompile::class) {
-        //source = fileTree("$projectDir/src/generated/java/mondrian/resource")
-    }*/
-
     register("ccParser", JavaExec::class) {
         group = "build"
         description = "Javacc compilation of Mondrian MDX grammar"
@@ -80,17 +67,19 @@ tasks {
         group = "build"
         description = "Mondrian properties class"
         mainClass.set("mondrian.util.PropertyUtil")
-        classpath = sourceSets["generateProperties"].runtimeClasspath
+        classpath = sourceSets["propertyUtil"].runtimeClasspath
         args = listOf("src/main/java/mondrian/olap", "src/generated/java/mondrian/olap")
-        ///dependsOn(project.tasks.getByName("generateProperties"))
+        dependsOn(getByName("compileExceptionTypesJava"))
+
     }
 
     register("generateMondrianResources") {
         group = "build"
-        dependsOn(resgen, getByName("compileGeneratePropertiesJava"), getByName("compileGenerateResourcesJava"))
+        dependsOn(resgen, getByName("exceptionTypesClasses"), getByName("compilePropertyUtilJava"), getByName("generatedResourceClasses"))
         doLast {
             var resGenClassPath = project(":eigenbase-resgen").sourceSets.getByName("main").output.classesDirs.asPath
             resGenClassPath += ";" + configurations.getByName("compileClasspath").asPath
+            resGenClassPath += ";" + sourceSets.getByName("exceptionTypes").output.classesDirs.asPath
             ant.withGroovyBuilder {
                 "taskdef"("name" to "resgen", "classname" to "org.eigenbase.resgen.ResourceGenTask", "classpath" to resGenClassPath)
                 "resgen"("srcdir" to "src/main/java", "destdir" to "src/generated/java", "resdir" to "src/generated/resources", "style" to "functor", "locales" to "en_US") {
@@ -189,34 +178,22 @@ dependencies {
     testImplementation(libs.mysql.mysql.connector.java)
 }
 
-tasks.getByName("compileGeneratePropertiesJava") {
+tasks.getByName("compilePropertyUtilJava") {
     dependsOn(project(":javacup").getTasksByName("jar", false))
 }
 
-/*tasks.getByName("generateProperties") {
-    dependsOn(project(":javacup").getTasksByName("shadowJar", false))
-}*/
-
-
-tasks.getByName("compileGenerateResourcesJava") {
+tasks.getByName("compileExceptionTypesJava") {
     dependsOn(project(":javacup").getTasksByName("jar", false))
 }
 
-tasks.getByName("compileCompileGeneratedResourcesJava") {
-    dependsOn(project(":javacup").getTasksByName("jar", false))
-}
-
-
-/*tasks.getByName("compiledGeneratedResources") {
-    dependsOn(project(":javacup").getTasksByName("shadowJar", false))
-}*/
 
 tasks.getByName("ccParser") {
     dependsOn(tasks.getByName("generateMondrianProperties"), tasks.getByName("generateMondrianResources"), tasks.getByName("parserCUP"), tasks.getByName("XOMGen"))
 }
 
-tasks.getByName("classes") {
-    dependsOn(tasks.getByName("ccParser"))
+
+tasks.getByName("compileJava") {
+    dependsOn(project(":javacup").getTasksByName("copyAntBuildOutput", false), tasks.getByName("ccParser"))
 }
 
 tasks.getByName("clean") {
