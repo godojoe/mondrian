@@ -480,7 +480,7 @@ non terminal Formula
     single_formula_specification;
 non terminal MemberProperty
     member_property_definition;
-non terminal
+non terminal Object
     cell_opt,
     dimension_opt,
     property;
@@ -1018,7 +1018,9 @@ case_expression ::=
     ;
 
 value_expression_opt ::=
-        /* empty */
+        /* empty */ {:
+            RESULT = null;
+        :}
     |   value_expression
     ;
 
@@ -1039,7 +1041,9 @@ when_clause ::=
     ;
 
 else_clause_opt ::=
-        /* empty */
+        /* empty */ {:
+            RESULT = null;
+        :}
     |   ELSE value_expression:x {:
             RESULT = x;
         :}
@@ -1425,7 +1429,6 @@ select_statement ::=
         FROM cube_specification:c
         where_clause_opt:w
         cell_props_opt:cp {:
-            Parser parser = (Parser) CUP$Parser$parser;
             // We want 'Sales', not '[Sales]', and can't handle 'Schema.Sales'
             // yet.
             String cubeName = ((Id.NameSegment) c.getElement(0)).name;
@@ -1464,7 +1467,9 @@ axis_specification_list ::=
         :}
     ;
 where_clause_opt ::=
-        /* empty */
+        /* empty */ {:
+            RESULT = null;
+        :}
     |   WHERE slicer_specification:s {:
             RESULT = s;
         :}
@@ -1625,7 +1630,9 @@ non_empty_opt ::=
         :}
     ;
 dim_props_opt ::=
-        /* empty */
+        /* empty */ {:
+            RESULT = null;
+        :}
     |   dim_props
     ;
 //
@@ -1667,7 +1674,9 @@ dim_props ::=
     :}
     ;
 dimension_opt ::=
-    /* empty */
+    /* empty */ {:
+        RESULT = null;
+    :}
     |   DIMENSION
     ;
 property_list ::=
@@ -1701,7 +1710,9 @@ cell_props ::=
         :}
     ;
 cell_opt ::=
-        /* empty */
+        /* empty */ {:
+            RESULT = null;
+        :}
     |   CELL
     ;
 cell_property_list ::=
