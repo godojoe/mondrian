@@ -58,7 +58,7 @@ tasks {
         doFirst {
             val javaCCJar = javaccparsergen.resolvedConfiguration.resolvedArtifacts.single { it.extension == "jar" }.file.absolutePath
             classpath = fileTree(javaCCJar)
-            args = listOf("-OUTPUT_DIRECTORY=${projectDir}/src/main/java/mondrian/parser", "${projectDir}/src/main/java/mondrian/parser/MdxParser.jj")
+            args = listOf("-OUTPUT_DIRECTORY=${projectDir}/src/generated/java/mondrian/parser", "${projectDir}/src/main/java/mondrian/parser/MdxParser.jj")
         }
         dependsOn(javaccparsergen)
     }
