@@ -7,6 +7,7 @@
 plugins {
     id("java")
     id("java-library")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 tasks.register("prepareKotlinBuildScriptModel") {}
@@ -47,7 +48,20 @@ sourceSets {
             compileClasspath += getByName("propertyUtil").output
             compileClasspath += getByName("exceptionTypes").output
         }
+
+        resources {
+            srcDir("$projectDir/src/generated/resources")
+        }
     }
+
+    create("it") {
+        java {
+            srcDir("$projectDir/src/it/java")
+            compileClasspath += sourceSets["main"].compileClasspath
+            destinationDirectory.set(layout.buildDirectory.dir("classes/java/it"))
+        }
+    }
+
 }
 
 tasks {
@@ -82,7 +96,7 @@ tasks {
             resGenClassPath += ";" + sourceSets.getByName("exceptionTypes").output.classesDirs.asPath
             ant.withGroovyBuilder {
                 "taskdef"("name" to "resgen", "classname" to "org.eigenbase.resgen.ResourceGenTask", "classpath" to resGenClassPath)
-                "resgen"("srcdir" to "src/main/java", "destdir" to "src/generated/java", "resdir" to "src/generated/resources", "style" to "functor", "locales" to "en_US") {
+                "resgen"("srcdir" to "src/main/java", "destdir" to "src/generated/java", "resdir" to "src/generated/resources", "style" to "functor", "locales" to "en_US,en_GB") {
                     "include"("name" to "mondrian/resource/MondrianResource.xml")
                 }
             }
