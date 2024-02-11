@@ -14,6 +14,7 @@ eigenbase-eigenbase-properties = "1.1.2"
 eigenbase-eigenbase-resgen = "1.3.4"
 eigenbase-eigenbase-xom = "1.3.4"
 javacup-javacup = "10k"
+javax-activation-activation = "1.1.1"
 javax-servlet-jsp-api = "2.0"
 javax-servlet-servlet-api = "2.4"
 javax-validation-validation-api = "1.1.0.Final"
@@ -49,6 +50,7 @@ eigenbase-eigenbase-properties = { module = "eigenbase:eigenbase-properties", ve
 eigenbase-eigenbase-resgen = { module = "eigenbase:eigenbase-resgen", version.ref = "eigenbase-eigenbase-resgen" }
 eigenbase-eigenbase-xom = { module = "eigenbase:eigenbase-xom", version.ref = "eigenbase-eigenbase-xom" }
 javacup-javacup = { module = "javacup:javacup", version.ref = "javacup-javacup" }
+javax-activation-activation = { module = "javax.activation:activation", version.ref = "javax-activation-activation" }
 javax-servlet-jsp-api = { module = "javax.servlet:jsp-api", version.ref = "javax-servlet-jsp-api" }
 javax-servlet-servlet-api = { module = "javax.servlet:servlet-api", version.ref = "javax-servlet-servlet-api" }
 javax-validation-validation-api = { module = "javax.validation:validation-api", version.ref = "javax-validation-validation-api" }
