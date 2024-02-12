@@ -14,7 +14,6 @@ tasks.register("prepareKotlinBuildScriptModel") {}
 java.sourceCompatibility = JavaVersion.VERSION_17
 java.targetCompatibility = JavaVersion.VERSION_17
 
-
 sourceSets {
     create("propertyUtil") {
         java {
@@ -173,8 +172,22 @@ dependencies {
     api(libs.javax.validation.validation.api)
 	api(libs.javax.activation.activation)
     api("com.sun.activation:all:2.0.1")
-    api("avalon-framework:avalon-framework:4.1.5")
-    api("org.apache.xmlgraphics:batik-all:1.17")
+    api("avalon-framework:avalon-framework:4.1.3")
+    api("org.apache.xmlgraphics:batik-all:1.13")
+    api("commons-beanutils:commons-beanutils:1.6")
+    api("commons-digester:commons-digester:1.6")
+    api("commons-fileupload:commons-fileupload:1.2.1")
+    api("org.apache.xmlgraphics:fop:2.1")
+    api("org.codehaus.groovy:groovy-all:1.6.0")
+    //api("com.sun.media:jai-codec:1.1.3")
+    api("org.apache.jakarta:jakarta-regexp:1.2")
+    api("jaxen:jaxen:full")
+    api("jcommon:jcommon:1.0.5")
+    api("jfree:jfreechart:1.0.9")
+    api("com.sun.faces:jsf-api:2.2.12")
+    api("javax.servlet:jstl:1.2")
+    api("javax.xml.soap:saaj-api:1.3.4")
+    api("saxpath:saxpath:1.0-FCS")
     api(project(":eigenbase-xom"))
     compileOnly(project(":eigenbase-properties"))
     compileOnly(project(":eigenbase-resgen"))
