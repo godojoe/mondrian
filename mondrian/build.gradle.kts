@@ -50,13 +50,16 @@ sourceSets {
 
         resources {
             srcDir("$projectDir/src/generated/resources")
+            srcDir(layout.buildDirectory.dir("resources/it"))
         }
     }
 
     create("it") {
         java {
             srcDir("$projectDir/src/it/java")
-            compileClasspath += sourceSets["main"].compileClasspath
+            compileClasspath += sourceSets["main"].output
+            compileClasspath += sourceSets["generatedResource"].output
+            compileClasspath += sourceSets.test.get().compileClasspath
             destinationDirectory.set(layout.buildDirectory.dir("classes/java/it"))
         }
     }
@@ -155,6 +158,9 @@ val resgen = configurations.create("resgen")
 val xomgen = configurations.create("xomgen")
 val parsergen = configurations.create("parsergen")
 val javaccparsergen = configurations.create("javaccparsergen")
+val iTest by configurations.creating {
+    extendsFrom(configurations.testImplementation.get())
+}
 
 dependencies {
     api(libs.xml.apis.xml.apis)
@@ -189,7 +195,7 @@ dependencies {
     api("javax.xml.soap:saaj-api:1.3.4")
     api("saxpath:saxpath:1.0-FCS")
     api(project(":eigenbase-xom"))
-    compileOnly(project(":eigenbase-properties"))
+    api(project(":eigenbase-properties"))
     compileOnly(project(":eigenbase-resgen"))
     resgen(project(":eigenbase-resgen"))
     xomgen(project(":eigenbase-xom"))
@@ -202,10 +208,23 @@ dependencies {
     parsergen(project(":javacup"))
     api(libs.net.java.dev.javacc.javacc)
     javaccparsergen(libs.net.java.dev.javacc.javacc)
-    testImplementation(libs.org.olap4j.olap4j.tck)
+    //testImplementation(libs.org.olap4j.olap4j.tck)
     testImplementation(libs.xmlunit.xmlunit)
     testImplementation(libs.org.mockito.mockito.all)
-    testImplementation(libs.mysql.mysql.connector.java)
+    api(libs.mysql.mysql.connector.java)
+    api("com.google.protobuf:protobuf-java") {
+        version {
+            strictly("3.11.0")
+        }
+    }
+    testImplementation("com.google.protobuf:protobuf-java") {
+        version {
+            strictly("3.11.0")
+        }
+    }
+    testImplementation(project(":eigenbase-properties"))
+    testImplementation(project(":eigenbase-resgen"))
+
 }
 
 tasks.getByName("compilePropertyUtilJava") {
@@ -224,6 +243,10 @@ tasks.getByName("ccParser") {
 
 tasks.getByName("compileJava") {
     dependsOn(project(":javacup").getTasksByName("copyAntBuildOutput", false), tasks.getByName("ccParser"))
+}
+
+tasks.getByName("processResources") {
+    dependsOn(tasks.getByName("processItResources"))
 }
 
 tasks.getByName("clean") {
