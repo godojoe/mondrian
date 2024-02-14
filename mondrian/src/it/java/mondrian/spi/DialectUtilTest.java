@@ -20,15 +20,15 @@ public class DialectUtilTest extends TestCase {
   }
 
   public void testCleanUnicodeAwareCaseFlag_InputContainsFlag() {
-    String inputExpression = "(?i)|(?u).*ａ.*";
-    String expectedExpression = "(?i).*ａ.*";
+    String inputExpression = "(?i)|(?u).*\u0081.*";
+    String expectedExpression = "(?i).*\u0081.*";
     String cleaned = DialectUtil.cleanUnicodeAwareCaseFlag( inputExpression );
     assertEquals( expectedExpression, cleaned );
   }
 
   public void testCleanUnicodeAwareCaseFlag_InputNotContainsFlag() {
-    String inputExpression = "(?i).*ａ.*";
-    String expectedExpression = "(?i).*ａ.*";
+    String inputExpression = "(?i).*\u0081.*";
+    String expectedExpression = "(?i).*\u0081.*";
     String cleaned = DialectUtil.cleanUnicodeAwareCaseFlag( inputExpression );
     assertEquals( expectedExpression, cleaned );
   }
